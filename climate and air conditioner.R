@@ -58,8 +58,11 @@ dataset$range<-factor(dataset$range,
                        levels=c("<=0","0-2","2-4","4-6","6-8","8-10","10-12","12-14","14-16","16-18","18-20", 
                                 "20-22","22-24","24-26","26-28","28-30","30-32","32-34",">34"), order=T) 
 
+dataset$variable[dataset$variable=="Main"] <- "(a) Main"
+dataset$variable[dataset$variable=="Price Outlier"] <- "(b) Price Outlier"
+
 dataset$variable<-factor(dataset$variable, 
-                     levels=c("Main","Price Outlier"), order=T) 
+                     levels=c("(a) Main","(b) Price Outlier"), order=T) 
 
 coefficient<-ggplot()
 coefficient<-coefficient+geom_point(data=dataset[which(dataset$coef=="c"),], aes(x=range, y=est_*100, group=variable), size=2)
@@ -76,8 +79,12 @@ coefficient<-coefficient+theme_bw()+theme(axis.text.x = element_text(angle = 90,
                                           legend.position="bottom")
 coefficient<-coefficient+labs(x="Temperature",y ="Probability of being Energy Star Model, %", colour=NULL)
 #coefficient<-coefficient+ guides(color=FALSE)
-coefficient<-coefficient+ geom_hline(data=dataset, aes(yintercept=0),  col="grey", linetype="dashed", size=1)
+coefficient<-coefficient+geom_hline(data=dataset, aes(yintercept=0),  col="grey", linetype="dashed", size=1)
 coefficient
+
+ggsave("figure_1.pdf",coefficient, width = 16.2, height=10, units="in", dpi=900)
+
+write.csv(dataset,"figure_1.csv")
 
 
 #######lag
@@ -91,11 +98,16 @@ dataset<-read_dta("coefficient R lag.dta")
 dataset$variable<-factor(dataset$variable, 
                          levels=c("Main","Price Outlier"), order=T) 
 
+dataset$setting[dataset$setting=="Major analysis"] <- "(a) Major analysis"
+dataset$setting[dataset$setting=="Current weather controlled"] <- "(b) Current weather controlled"
+dataset$setting[dataset$setting=="Lagged weather separated"] <- "(c) Lagged weather separated"
+dataset$setting[dataset$setting=="Lagged weather summed"] <- "(d) Lagged weather summed"
+
 dataset$setting<-factor(dataset$setting, 
-                         levels=c("Major analysis",
-                                  "Current weather controlled",
-                                  "Lagged weather separated",
-                                  "Lagged weather summed"), order=T) 
+                         levels=c("(a) Major analysis",
+                                  "(b) Current weather controlled",
+                                  "(c) Lagged weather separated",
+                                  "(d) Lagged weather summed"), order=T) 
 
 coefficient<-ggplot()
 coefficient<-coefficient+geom_point(data=dataset[which(dataset$coef=="c"),], aes(x=indicator, y=estimate*100, color=color), position = position_dodge(width = 0.5), size=2)
@@ -114,6 +126,10 @@ coefficient<-coefficient+labs(x=NULL,y ="Probability of being Energy Star Model,
 coefficient<-coefficient+ geom_hline(data=dataset, aes(yintercept=0),  col="grey", linetype="dashed", size=1)
 coefficient
 
+ggsave("figure_2.pdf",coefficient, width = 16.2, height=10, units="in", dpi=900)
+
+write.csv(dataset,"figure_2.csv")
+
 
 #######heterogeneous
 setwd("C:/Users/sglph2/OneDrive - Cardiff University/Desktop/climate and air conditioner")
@@ -131,23 +147,41 @@ dataset$group_c[dataset$group==3]<-"High"
 dataset$group_c<-factor(dataset$group_c, 
                       levels=c("Low","Medium","High"), order=T) 
 
+dataset$variable[dataset$variable=="State-level electricity price"] <- "(a) State-level electricity price"
+dataset$variable[dataset$variable=="Background climate - CDD"] <- "(b) Background climate - CDD"
+dataset$variable[dataset$variable=="Background climate - HDD"] <- "(c) Background climate - HDD"
+dataset$variable[dataset$variable=="Median income"] <- "(d) Median income"
+dataset$variable[dataset$variable=="% of population > bachelor"] <- "(e) % of population > bachelor"
+dataset$variable[dataset$variable=="% of White people"] <- "(f) % of White people"
+dataset$variable[dataset$variable=="Median age"] <- "(g) Median age"
+dataset$variable[dataset$variable=="Median number of rooms"] <- "(h) Median number of rooms"
+dataset$variable[dataset$variable=="Owner:Renter"] <- "(i) Owner:Renter"
+dataset$variable[dataset$variable=="% of electricity as heating fuel"] <- "(j) % of electricity as heating fuel"
+dataset$variable[dataset$variable=="Believe climate change happening"] <- "(k) Believe climate change happening"
+dataset$variable[dataset$variable=="Believe climate change harm US"] <- "(l) Believe climate change harm US"
+dataset$variable[dataset$variable=="Worry about climate change"] <- "(m) Worry about climate change"
+dataset$variable[dataset$variable=="Support renewable energy standards"] <- "(n) Support renewable energy standards"
+dataset$variable[dataset$variable=="Support regulation of CO2"] <- "(o) Support regulation of CO2"
+dataset$variable[dataset$variable=="Support Democratic Party"] <- "(p) Support Democratic Party"
+
+
 dataset$variable<-factor(dataset$variable, 
-                         levels=c("State-level electricity price",
-                                  "Background climate - CDD",
-                                  "Background climate - HDD",
-                                  "Median income",
-                                  "% of population > bachelor",
-                                  "% of white people",
-                                  "Median age",
-                                  "Median number of rooms",
-                                  "Owner:Renter",
-                                  "% of electricity as heating fuel",
-                                  "Believe climate change happening",
-                                  "Believe climate change harm US",
-                                  "Worry about climate change",
-                                  "Support renewable energy standards",
-                                  "Support regulation of CO2",
-                                  "Support Democratic Party"
+                         levels=c("(a) State-level electricity price",
+                                  "(b) Background climate - CDD",
+                                  "(c) Background climate - HDD",
+                                  "(d) Median income",
+                                  "(e) % of population > bachelor",
+                                  "(f) % of White people",
+                                  "(g) Median age",
+                                  "(h) Median number of rooms",
+                                  "(i) Owner:Renter",
+                                  "(j) % of electricity as heating fuel",
+                                  "(k) Believe climate change happening",
+                                  "(l) Believe climate change harm US",
+                                  "(m) Worry about climate change",
+                                  "(n) Support renewable energy standards",
+                                  "(o) Support regulation of CO2",
+                                  "(p) Support Democratic Party"
                                   ), order=T) 
 
 coefficient<-ggplot()
@@ -156,7 +190,7 @@ coefficient<-coefficient+geom_point(data=dataset[which(dataset$coef=="c"),], aes
 coefficient<-coefficient+geom_line(data =dataset[which(dataset$coef!="c"),], aes(x=group_c, y=estimate*100, group=interaction(group, id), color=id), position = position_dodge(width = 0.5), size=1)
 coefficient<-coefficient+facet_wrap(~variable, nrow=4)
 coefficient<-coefficient+theme_bw()+theme(axis.text.x = element_text(),
-                                          text = element_text(size=25),
+                                          text = element_text(size=18),
                                           legend.text=element_text(size=25),
                                           panel.grid.major = element_blank(),
                                           panel.grid.minor = element_blank(),
@@ -168,7 +202,9 @@ coefficient<-coefficient+labs(x="Group",y ="Probability of being Energy Star Mod
 coefficient<-coefficient+ geom_hline(data=dataset, aes(yintercept=0),  col="grey", linetype="dashed", size=1)
 coefficient
 
+ggsave("figure_3.pdf",coefficient, width = 16.2, height=10, units="in", dpi=900)
 
+write.csv(dataset,"figure_3.csv")
 
 
 #######main telephone
@@ -189,8 +225,11 @@ dataset$range<-factor(dataset$range,
                       levels=c("<=0","0-2","2-4","4-6","6-8","8-10","10-12","12-14","14-16","16-18","18-20", 
                                "20-22","22-24","24-26","26-28","28-30","30-32","32-34",">34"), order=T) 
 
+dataset$variable[dataset$variable=="Main"] <- "(a) Main"
+dataset$variable[dataset$variable=="Price Outlier"] <- "(b) Price Outlier"
+
 dataset$variable<-factor(dataset$variable, 
-                         levels=c("Main","Price Outlier"), order=T) 
+                         levels=c("(a) Main","(b) Price Outlier"), order=T) 
 
 coefficient<-ggplot()
 coefficient<-coefficient+geom_point(data=dataset[which(dataset$coef=="c"),], aes(x=range, y=est_*100, group=variable), size=2)
@@ -210,6 +249,8 @@ coefficient<-coefficient+labs(x="Temperature",y ="Probability of being Energy St
 coefficient<-coefficient+ geom_hline(data=dataset, aes(yintercept=0),  col="grey", linetype="dashed", size=1)
 coefficient
 
+write.csv(dataset,"figure_S2.csv")
+
 
 #######lag telephone
 setwd("C:/Users/sglph2/OneDrive - Cardiff University/Desktop/climate and air conditioner")
@@ -222,11 +263,16 @@ dataset<-read_dta("coefficient R lag telephone.dta")
 dataset$variable<-factor(dataset$variable, 
                          levels=c("Main","Price Outlier"), order=T) 
 
+dataset$setting[dataset$setting=="Major analysis"] <- "(a) Major analysis"
+dataset$setting[dataset$setting=="Current weather controlled"] <- "(b) Current weather controlled"
+dataset$setting[dataset$setting=="Lagged weather separated"] <- "(c) Lagged weather separated"
+dataset$setting[dataset$setting=="Lagged weather summed"] <- "(d) Lagged weather summed"
+
 dataset$setting<-factor(dataset$setting, 
-                        levels=c("Major analysis",
-                                 "Current weather controlled",
-                                 "Lagged weather separated",
-                                 "Lagged weather summed"), order=T) 
+                        levels=c("(a) Major analysis",
+                                 "(b) Current weather controlled",
+                                 "(c) Lagged weather separated",
+                                 "(d) Lagged weather summed"), order=T) 
 
 coefficient<-ggplot()
 coefficient<-coefficient+geom_point(data=dataset[which(dataset$coef=="c"),], aes(x=indicator, y=estimate*100, color=color), position = position_dodge(width = 0.5), size=2)
@@ -244,3 +290,5 @@ coefficient<-coefficient+labs(x=NULL,y ="Probability of being Energy Star Model,
 #coefficient<-coefficient+ guides(color=FALSE)
 coefficient<-coefficient+ geom_hline(data=dataset, aes(yintercept=0),  col="grey", linetype="dashed", size=1)
 coefficient
+
+write.csv(dataset,"figure_S3.csv")
